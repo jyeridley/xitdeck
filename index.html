@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#000000">
+<title>Xitter Pro</title>
+<link rel="icon" type="image/png" data-at="href:/public/favicon.png">
+<style>
+:root{--bg:#000;--panel:#000;--raise:#16181c;--hover:#181919;--line:#2f3336;--text:#e7e9ea;--muted:#71767b;--accent:#1d9bf0;--accent-text:#fff;--shade:rgb(91 112 131 / .4);--font:TwitterChirp,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+:root[data-light]{--bg:#f7f9f9;--panel:#fff;--raise:#fff;--hover:#f7f9f9;--line:#eff3f4;--text:#0f1419;--muted:#536471;--shade:rgb(0 0 0 / .4)}
+:root[data-dim]{--bg:#15202b;--panel:#15202b;--raise:#1e2732;--hover:#1c2732;--line:#38444d;--text:#f7f9f9;--muted:#8b98a5}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.3 var(--font);display:flex;overflow:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+input{font:inherit;color:inherit}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+/* side bar */
+#nav{width:292px;flex:none;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel)}
+.me{display:flex;align-items:center;gap:12px;padding:16px;min-height:91px;border-bottom:1px solid var(--line)}
+.me img,.me .ph{width:44px;height:44px;border-radius:50%;flex:none;background:var(--raise);object-fit:cover}
+.me .who{min-width:0;flex:1}
+.me b,.me span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me b{font-size:17px}
+.me span,.muted{color:var(--muted)}
+.icon-btn{display:inline-grid;place-items:center;width:36px;height:36px;border-radius:50%;color:var(--text);flex:none}
+.icon-btn:hover{background:var(--hover)}
+.post{margin:20px 8px 0;height:50px;border-radius:999px;background:var(--accent);color:var(--accent-text);font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;gap:8px}
+.post:hover{filter:brightness(.92)}
+.post svg{display:none}
+.tools{display:flex;margin:16px 0;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.tools button{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;font-size:14px;font-weight:500;padding:6px 0;border-radius:8px}
+.tools button:hover{background:var(--hover)}
+.tools button+button{border-left:1px solid var(--line);border-radius:0}
+.decks-head{display:flex;align-items:center;justify-content:space-between;padding:6px 14px 10px;color:var(--muted);font-size:17px;font-weight:700}
+.decks-head button{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--text);padding:6px;border-radius:6px}
+.decks-head button:hover{background:var(--hover)}
+#decks{flex:1;overflow:auto}
+.deck{display:flex;align-items:center;gap:10px;height:50px;padding:0 10px 0 14px;cursor:pointer;border-left:4px solid transparent;font-weight:500}
+.deck:hover{background:var(--hover)}
+.deck.on{background:var(--raise);border-left-color:var(--accent);font-weight:700}
+.deck .emoji{width:22px;text-align:center;font-size:18px}
+.deck .name{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deck .icon-btn{width:32px;height:32px;visibility:hidden}
+.deck:hover .icon-btn,.deck.on .icon-btn,.deck .icon-btn:focus-visible{visibility:visible}
+.more{display:flex;align-items:center;gap:12px;padding:16px 18px;border-top:1px solid var(--line);font-size:15px;width:100%}
+.more:hover{background:var(--hover)}
+.foot{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-top:1px solid var(--line);min-height:68px}
+.brand{display:flex;align-items:center;gap:6px;font-weight:800;font-size:19px;color:var(--text);text-decoration:none}
+.brand img{height:26px;max-width:120px;object-fit:contain}
+.brand .mark{height:26px;width:26px}
+body.slim #nav{width:72px}
+body.slim .who,body.slim .me .icon-btn,body.slim .post span,body.slim .tools span,body.slim .decks-head span,body.slim .decks-head button span,body.slim .deck .name,body.slim .deck .icon-btn,body.slim .more span,body.slim .brand .word,body.slim .brand .wordmark{display:none}
+body.slim .me{justify-content:center;padding:16px 0}
+body.slim .post{margin:20px 10px 0;width:50px}
+body.slim .post svg{display:block}
+body.slim .tools{flex-direction:column;gap:6px}
+body.slim .tools button+button{border-left:0}
+body.slim .decks-head{justify-content:center;padding:6px 0 10px}
+body.slim .deck{padding:0;justify-content:center}
+body.slim .more{justify-content:center;padding:16px 0}
+body.slim .foot{flex-direction:column-reverse;gap:12px;padding:14px 0}
+body.slim #collapse svg{transform:scaleX(-1)}
+
+/* columns */
+#board{flex:1;min-width:0;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x proximity}
+.col{flex:none;display:flex;flex-direction:column;border-right:1px solid var(--line);background:var(--panel);scroll-snap-align:start;position:relative}
+.col.s{width:350px}.col.m{width:420px}.col.l{width:520px}
+.col.dragging{opacity:.45}
+.col.drop-before{box-shadow:inset 3px 0 0 var(--accent)}
+.col.drop-after{box-shadow:inset -3px 0 0 var(--accent)}
+.col-head{display:flex;align-items:center;gap:8px;height:60px;padding:0 10px 0 6px;border-bottom:1px solid var(--line);flex:none}
+.grip{cursor:grab;color:var(--muted);display:grid;place-items:center;width:20px;height:36px}
+.grip svg{width:16px;height:16px;fill:currentColor;stroke:none}
+.col-badge{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--raise);flex:none;overflow:hidden}
+.col-badge img{width:100%;height:100%;object-fit:cover}
+.col-badge svg{width:19px;height:19px}
+.col-title{flex:1;min-width:0;text-align:left;padding:2px 4px;border-radius:6px}
+.col-title small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col-title b{display:block;font-size:19px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.col-frame{flex:1;width:100%;border:0;background:var(--panel);display:block}
+.col.busy .col-frame{pointer-events:none}
+.col-menu{position:absolute;top:56px;right:8px;z-index:5}
+.empty{margin:auto;max-width:420px;padding:32px;text-align:center}
+.empty h2{font-size:26px;margin:0 0 8px}
+.empty .post{display:inline-flex;padding:0 28px;margin-top:20px}
+.add-tail{flex:none;width:240px;display:grid;place-items:center}
+.pill{display:inline-flex;align-items:center;gap:10px;height:50px;padding:0 24px;border-radius:999px;background:var(--text);color:var(--bg);font-weight:700;font-size:17px}
+.pill:hover{opacity:.9}
+.pill svg{stroke:var(--bg)}
+
+/* add column drawer */
+#adder{width:440px;flex:none;border-right:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;overflow:hidden}
+#adder[hidden]{display:none}
+.adder-head{display:flex;align-items:center;justify-content:space-between;padding:20px 16px 4px 20px}
+.adder-head h1{font-size:31px;font-weight:800;margin:0}
+.adder-body{overflow:auto;padding:0 20px 24px}
+.adder-body h2{font-size:20px;font-weight:800;margin:24px 0 12px}
+.searchbox{display:flex;align-items:center;gap:10px;height:44px;border:1px solid var(--line);border-radius:999px;padding:0 16px;background:var(--panel)}
+.searchbox:focus-within{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.searchbox svg{width:18px;height:18px;color:var(--muted)}
+.searchbox input{flex:1;border:0;background:none;outline:0;min-width:0}
+.choice{display:flex;gap:16px;align-items:flex-start;width:100%;text-align:left;padding:12px 8px;border-radius:10px}
+.choice:hover{background:var(--hover)}
+.choice svg{margin-top:2px}
+.choice b{display:block;font-size:17px}
+.choice span{display:block;color:var(--muted);font-size:15px;margin-top:2px}
+.ask{display:flex;gap:8px;padding:4px 8px 12px 46px}
+.ask .searchbox{flex:1;height:40px}
+.small-btn{height:40px;padding:0 18px;border-radius:999px;background:var(--text);color:var(--bg);font-weight:700}
+.small-btn:disabled{opacity:.5;cursor:default}
+
+/* menus and dialogs */
+.menu{min-width:220px;background:var(--panel);border-radius:12px;box-shadow:0 0 15px rgb(101 119 134 / .2),0 0 3px 1px rgb(101 119 134 / .15);padding:6px 0;overflow:hidden}
+.menu button,.menu a{display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;font-weight:700;font-size:15px;text-align:left;color:var(--text);text-decoration:none}
+.menu button:hover,.menu a:hover{background:var(--hover)}
+.menu .danger{color:#f4212e}
+.menu .seg{display:flex;gap:6px;padding:8px 16px 12px}
+.menu .seg button{flex:1;justify-content:center;padding:8px 0;border:1px solid var(--line);border-radius:999px;font-size:14px}
+.menu .seg button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
+.menu .label{padding:10px 16px 0;color:var(--muted);font-size:13px}
+#layer{position:fixed;inset:0;z-index:20;display:none}
+#layer.open{display:block}
+#layer .pop{position:fixed}
+#modal{position:fixed;inset:0;z-index:30;background:var(--shade);display:none;align-items:flex-start;justify-content:center;padding:5vh 16px}
+#modal.open{display:flex}
+.sheet{background:var(--panel);border-radius:16px;width:min(600px,100%);max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.sheet.compose{height:min(560px,88vh)}
+.sheet.compose iframe{flex:1;border:0;width:100%}
+.sheet-head{display:flex;align-items:center;gap:12px;padding:8px 12px;min-height:53px}
+.sheet-head h3{margin:0;font-size:20px;font-weight:800}
+.sheet .fields{padding:4px 24px 24px;display:grid;gap:14px}
+.sheet label{display:grid;gap:6px;color:var(--muted);font-size:14px}
+.sheet label input{height:48px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:0 12px;font-size:17px;color:var(--text)}
+.sheet label input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.sheet .row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
+.sheet .ghost{height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--line);font-weight:700}
+#banner{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:25;background:var(--accent);color:var(--accent-text);padding:12px 12px 12px 18px;border-radius:12px;display:none;align-items:center;gap:14px;box-shadow:0 4px 20px rgb(0 0 0 / .4);max-width:calc(100% - 32px)}
+#banner.open{display:flex}
+#banner a{color:inherit;font-weight:700;background:rgb(255 255 255 / .2);padding:8px 14px;border-radius:999px;text-decoration:none;white-space:nowrap}
+
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:10px;border:2px solid var(--bg)}
+::-webkit-scrollbar-track{background:var(--bg)}
+
+@media (max-width:700px){
+	#nav{width:72px}
+	#nav .who,#nav .me .icon-btn,#nav .post span,#nav .tools span,#nav .decks-head span,#nav .decks-head button span,#nav .deck .name,#nav .deck .icon-btn,#nav .more span,#nav .brand .word,#nav .brand .wordmark,#collapse{display:none}
+	#nav .me{justify-content:center;padding:16px 0}
+	#nav .post{margin:20px 10px 0;width:50px}
+	#nav .post svg{display:block}
+	#nav .tools{flex-direction:column;gap:6px}
+	#nav .tools button+button{border-left:0}
+	#nav .decks-head{justify-content:center;padding:6px 0 10px}
+	#nav .deck{padding:0;justify-content:center}
+	#nav .more{justify-content:center;padding:16px 0}
+	.col.s,.col.m,.col.l{width:calc(100vw - 72px)}
+	#adder{position:fixed;inset:0 0 0 72px;width:auto;z-index:10}
+}
+</style>
+</head>
+<body>
+<nav id="nav" aria-label="Decks">
+	<div class="me" id="me">
+		<div class="ph"></div>
+		<div class="who"><b>&nbsp;</b><span>&nbsp;</span></div>
+	</div>
+	<button class="post" id="post" type="button"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>Post</span></button>
+	<div class="tools">
+		<button type="button" id="add-col"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M14.5 9v6M11.5 12h6"/></svg><span>Add column</span></button>
+		<button type="button" id="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><span>Search</span></button>
+	</div>
+	<div class="decks-head"><span>Decks</span><button type="button" id="new-deck"><span>New Deck</span><svg viewBox="0 0 24 24"><rect x="3" y="4" width="13" height="16" rx="2"/><path d="M8 4v16M20 6v6M17 9h6"/></svg></button></div>
+	<div id="decks" role="list"></div>
+	<button class="more" type="button" id="more"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12h.01M12 12h.01M16 12h.01" stroke-width="2.6"/></svg><span>More</span></button>
+	<div class="foot">
+		<button class="icon-btn" type="button" id="collapse" aria-label="Collapse side bar"><svg viewBox="0 0 24 24"><path d="m15 5-7 7 7 7"/></svg></button>
+		<a class="brand" data-at="href:/home" target="_blank" rel="noopener"><img class="mark" data-at="src:/public/icon-dark.png" alt=""><span class="word" data-instance></span><span class="word">Pro</span></a>
+	</div>
+</nav>
+<section id="adder" hidden aria-label="Add column">
+	<div class="adder-head"><h1>Add column</h1><button class="icon-btn" type="button" id="adder-close" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+	<div class="adder-body">
+		<h2>Search</h2>
+		<form class="searchbox" id="adder-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg><input name="q" placeholder="Search" autocomplete="off" aria-label="Search"></form>
+		<h2>Choose one</h2>
+		<div id="choices"></div>
+	</div>
+</section>
+<main id="board"></main>
+<div id="layer"></div>
+<div id="modal" role="dialog" aria-modal="true"></div>
+<div id="banner" role="status"><span>You're signed out of <span data-instance></span>.</span><a data-at="href:/" target="_blank" rel="noopener">Sign in</a></div>
+<script src="config.js"></script>
+<script>
+// config.js names the instance; the page's links and pictures point at it
+(function () {
+	var c = window.XITDECK || {};
+	var origin = String(c.origin || "").replace(/\/$/, "");
+	var name = c.instance || "Xitter";
+	window.__PRO__ = { origin: origin, instance: name };
+	document.title = name + " Pro";
+	document.querySelectorAll("[data-instance]").forEach(function (el) { el.textContent = name; });
+	document.querySelectorAll("[data-at]").forEach(function (el) {
+		var at = el.getAttribute("data-at").split(":");
+		el.setAttribute(at[0], origin + at.slice(1).join(":"));
+	});
+})();
+</script>
+<script>
+(function () {
+	"use strict";
+	var CFG = window.__PRO__;
+	var ORIGIN = CFG.origin;
+	var KEY = "xitter-pro:" + ORIGIN;
+	var $ = function (s, r) { return (r || document).querySelector(s); };
+
+	var ICONS = {
+		home: '<path d="M4 10.5 12 4l8 6.5V20h-5.5v-6h-5v6H4z"/>',
+		notifications: '<path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20.5a2.2 2.2 0 0 0 4 0"/>',
+		search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+		profile: '<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.4-6.5 8-6.5s7 2 8 6.5"/>',
+		lists: '<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+		communities: '<circle cx="8" cy="9" r="3"/><circle cx="16" cy="9" r="3"/><path d="M2.5 19c.6-3 2.8-4.5 5.5-4.5s4.9 1.5 5.5 4.5M13 15c.9-.4 1.9-.5 3-.5 2.7 0 4.9 1.5 5.5 4.5"/>',
+		explore: '<path d="M10 3 8 21M16 3l-2 18M4 8.5h17M3 15.5h17"/>',
+		trending: '<path d="m3 17 6-6 4 4 8-8M15 7h6v6"/>',
+		bookmarks: '<path d="M6 3h12v18l-6-4.5L6 21z"/>',
+		messages: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/>',
+		likes: '<path d="M12 20s-7.5-4.6-9-9.5C2 7 4.5 4.5 7.5 4.5c2 0 3.5 1.2 4.5 2.7 1-1.5 2.5-2.7 4.5-2.7 3 0 5.5 2.5 4.5 6-1.5 4.9-9 9.5-9 9.5z"/>',
+		scheduled: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v3l2 1"/>',
+		link: '<path d="M10 14a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7l-1.3 1.3M14 10a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7l1.3-1.3"/>',
+		gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
+		back: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
+		refresh: '<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+		dots: '<path d="M6 12h.01M12 12h.01M18 12h.01" stroke-width="3"/>',
+		wrench: '<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/>',
+		grip: '<circle cx="9" cy="6" r="1.6"/><circle cx="15" cy="6" r="1.6"/><circle cx="9" cy="12" r="1.6"/><circle cx="15" cy="12" r="1.6"/><circle cx="9" cy="18" r="1.6"/><circle cx="15" cy="18" r="1.6"/>',
+		close: '<path d="M6 6l12 12M18 6 6 18"/>',
+		open: '<path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/>',
+		addcol: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 4v16M14.5 9v6M11.5 12h6"/>'
+	};
+	var icon = function (name) { return '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[name] + "</svg>"; };
+	var esc = function (s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+	var uid = function () { return Math.random().toString(36).slice(2, 10); };
+
+	// what a column can show: its address on the instance, and what it asks for
+	var TYPES = {
+		home: { label: "Home Timeline", desc: "See recommended posts first, or only the accounts you follow.", path: function () { return "/home"; }, title: function () { return "Home"; } },
+		lists: { label: "Lists", desc: "View your own or other people's lists.", ask: "List link or ID (empty for your lists)", optional: true, path: function (a, me) { return a ? "/i/lists/" + a : "/" + me + "/lists"; }, title: function (a) { return a ? "List" : "Lists"; } },
+		communities: { label: "Communities", desc: "View the Communities that you're a part of.", ask: "Community link or ID (empty for yours)", optional: true, path: function (a, me) { return a ? "/i/communities/" + a : "/" + me + "/communities"; }, title: function (a) { return a ? "Community" : "Communities"; } },
+		search: { label: "Search", desc: "Find what you're looking for.", ask: "Search terms or operators", path: function (a) { return "/search?q=" + encodeURIComponent(a) + "&src=typed_query&f=live"; }, title: function (a) { return a; }, sub: "Search" },
+		explore: { label: "Explore", desc: "Check what's trending on " + CFG.instance + ".", path: function () { return "/explore"; }, title: function () { return "Explore"; } },
+		trending: { label: "Trending", desc: "What people are talking about right now.", path: function () { return "/explore/tabs/trending"; }, title: function () { return "Trending"; } },
+		profile: { label: "Profiles", desc: "Find a profile and see what they've been up to.", ask: "@username", path: function (a) { return "/" + a; }, title: function (a) { return a; }, sub: "Profile" },
+		notifications: { label: "Notifications", desc: "Keep up with your notifications and mentions.", path: function () { return "/notifications"; }, title: function () { return "Notifications"; } },
+		messages: { label: "Messages", desc: "Your direct message conversations.", path: function () { return "/messages"; }, title: function () { return "Messages"; } },
+		bookmarks: { label: "Bookmarks", desc: "The posts you've saved for later.", path: function () { return "/i/bookmarks"; }, title: function () { return "Bookmarks"; } },
+		likes: { label: "Likes", desc: "Everything you've liked.", path: function (a, me) { return "/" + me + "/likes"; }, title: function () { return "Likes"; } },
+		scheduled: { label: "Scheduled posts", desc: "View your scheduled posts.", path: function () { return "/compose/post/unsent/scheduled"; }, title: function () { return "Scheduled"; } },
+		link: { label: "Any page", desc: "A link to any page on " + CFG.instance + ".", ask: "Link or path", path: function (a) { return a; }, title: function (a) { return a; }, sub: "Page" }
+	};
+
+	// what someone typed or pasted, as the column's argument
+	function cleanArg(type, raw) {
+		var v = String(raw || "").trim();
+		if (!v) return "";
+		var path = v;
+		try {
+			var u = new URL(v, ORIGIN);
+			if (/^https?:/i.test(v) || v.charAt(0) === "/") path = u.pathname + u.search;
+		} catch (e) {}
+		if (type === "lists" || type === "communities") {
+			var m = /(\d{1,19})(?:\/?$|\?)/.exec(path);
+			return m ? m[1] : "";
+		}
+		if (type === "profile") {
+			var h = path.replace(/^\/+/, "").replace(/^@/, "").split(/[/?#]/)[0];
+			return /^[\w.@-]{1,80}$/.test(h) ? h : "";
+		}
+		if (type === "link") {
+			if (path.charAt(0) !== "/") path = "/" + path;
+			return path.charAt(1) === "/" ? "" : path;
+		}
+		return v;
+	}
+
+	// --- saved state -------------------------------------------------------
+	var defaults = function () {
+		var id = uid();
+		return {
+			v: 1, active: id, slim: false, me: null,
+			decks: [{ id: id, name: "Personal", emoji: "⭐", columns: [
+				{ id: uid(), type: "home", width: "m" },
+				{ id: uid(), type: "notifications", width: "m" },
+				{ id: uid(), type: "explore", width: "m" }
+			] }]
+		};
+	};
+	var state;
+	try { state = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { state = null; }
+	if (!state || state.v !== 1 || !Array.isArray(state.decks) || !state.decks.length) state = defaults();
+	var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
+	var deck = function () { return state.decks.filter(function (d) { return d.id === state.active; })[0] || state.decks[0]; };
+
+	// --- talking to the columns --------------------------------------------
+	// each column is the instance's own client; it reports where it is and who
+	// is signed in, and takes back / top / reload (src/pro.ts, PRO_EMBED_SCRIPT)
+	var frames = new Map(); // contentWindow -> column id
+	var live = {}; // column id -> last report
+	var signedOut = false;
+
+	window.addEventListener("message", function (e) {
+		if (e.origin !== ORIGIN || !e.data || e.data.xpro !== "state") return;
+		var d = e.data;
+		if (composer && e.source === composer.win) return composerState(d);
+		var id = frames.get(e.source);
+		if (!id) return;
+		live[id] = d;
+		if (d.user) {
+			signedOut = false;
+			$("#banner").classList.remove("open");
+			if (!state.me || state.me.id !== d.user.id || state.me.avatar !== d.user.avatar || state.me.name !== d.user.name) {
+				var first = !state.me;
+				state.me = d.user; save(); drawMe();
+				// columns that needed the account's name can open now
+				if (first) deck().columns.filter(needsMe).forEach(function (c) {
+					var old = document.querySelector('.col[data-id="' + c.id + '"]');
+					if (old) old.replaceWith(columnEl(c));
+				});
+			}
+		} else {
+			signedOut = true;
+			$("#banner").classList.add("open");
+		}
+		if (d.bg) applyLook(d.bg, d.accent);
+		updateHead(id);
+	});
+	var send = function (id, msg) {
+		var f = document.querySelector('.col[data-id="' + id + '"] iframe');
+		if (f && f.contentWindow) f.contentWindow.postMessage(Object.assign({ xpro: msg.xpro }, msg), ORIGIN);
+	};
+
+	// the deck takes the client's own colours (light, dim, lights out) and accent
+	var lookKey = "";
+	function applyLook(bg, accent) {
+		var key = bg + "|" + accent;
+		if (key === lookKey) return;
+		lookKey = key;
+		var m = /(\d+)\D+(\d+)\D+(\d+)/.exec(bg);
+		var root = document.documentElement;
+		root.removeAttribute("data-light"); root.removeAttribute("data-dim");
+		if (m) {
+			var lum = (0.299 * m[1] + 0.587 * m[2] + 0.114 * m[3]) / 255;
+			if (lum > 0.5) root.setAttribute("data-light", "");
+			else if (lum > 0.04) root.setAttribute("data-dim", "");
+			root.style.setProperty("--bg", root.hasAttribute("data-light") ? "#f7f9f9" : bg);
+			root.style.setProperty("--panel", bg);
+			document.querySelector('meta[name="theme-color"]').content = bg;
+			var mark = $(".brand .mark");
+			if (mark) mark.src = ORIGIN + "/public/icon-" + (lum > 0.5 ? "light" : "dark") + ".png";
+		}
+		if (accent) root.style.setProperty("--accent", accent);
+	}
+
+	// --- side bar ----------------------------------------------------------
+	function drawMe() {
+		var me = state.me;
+		var box = $("#me");
+		box.innerHTML = (me && me.avatar ? '<img src="' + esc(me.avatar) + '" alt="">' : '<div class="ph"></div>') +
+			'<div class="who"><b>' + esc(me ? me.name : CFG.instance) + "</b><span>" + esc(me ? "@" + me.screen_name : "Not signed in") + "</span></div>" +
+			'<button class="icon-btn" type="button" aria-label="Account menu">' + icon("dots") + "</button>";
+		box.querySelector("button").onclick = function (e) {
+			menu(e.currentTarget, [
+				me && { label: "Add my profile", icon: "profile", run: function () { addColumn("profile", me.screen_name); } },
+				{ label: "Open " + CFG.instance, icon: "open", href: ORIGIN + "/home" },
+				{ label: "Account settings", icon: "gear", href: ORIGIN + "/settings" }
+			]);
+		};
+	}
+	function drawDecks() {
+		var list = $("#decks");
+		list.innerHTML = "";
+		state.decks.forEach(function (d) {
+			var row = document.createElement("div");
+			row.className = "deck" + (d.id === deck().id ? " on" : "");
+			row.setAttribute("role", "listitem");
+			row.tabIndex = 0;
+			row.title = d.name;
+			row.innerHTML = '<span class="emoji">' + esc(d.emoji || "📁") + '</span><span class="name">' + esc(d.name) + '</span><button class="icon-btn" type="button" aria-label="Edit deck">' + icon("wrench") + "</button>";
+			row.onclick = function () { if (state.active !== d.id) { state.active = d.id; save(); drawDecks(); drawBoard(); } };
+			row.onkeydown = function (e) { if (e.key === "Enter" && e.target === row) row.click(); };
+			row.querySelector("button").onclick = function (e) {
+				e.stopPropagation();
+				menu(e.currentTarget, [
+					{ label: "Edit deck", icon: "wrench", run: function () { editDeck(d); } },
+					state.decks.length > 1 && { label: "Delete deck", icon: "close", danger: true, run: function () {
+						if (!confirm('Delete the deck "' + d.name + '"?')) return;
+						state.decks = state.decks.filter(function (x) { return x !== d; });
+						if (state.active === d.id) state.active = state.decks[0].id;
+						save(); drawDecks(); drawBoard();
+					} }
+				]);
+			};
+			list.appendChild(row);
+		});
+	}
+	function editDeck(d) {
+		form(d ? "Edit deck" : "New deck", [
+			{ name: "name", label: "Name", value: d ? d.name : "", required: true, max: 40 },
+			{ name: "emoji", label: "Emoji", value: d ? d.emoji : "📁", max: 8 }
+		], d ? "Save" : "Create").then(function (v) {
+			if (!v) return;
+			if (d) { d.name = v.name; d.emoji = v.emoji; }
+			else {
+				d = { id: uid(), name: v.name, emoji: v.emoji, columns: [] };
+				state.decks.push(d);
+				state.active = d.id;
+				drawBoard();
+			}
+			save(); drawDecks();
+		});
+	}
+
+	// --- columns -----------------------------------------------------------
+	var basePath = function (c) { var t = TYPES[c.type]; return t ? t.path(c.arg || "", state.me ? state.me.screen_name : "") : "/home"; };
+	var needsMe = function (c) { return (c.type === "likes" || ((c.type === "lists" || c.type === "communities") && !c.arg)); };
+	var sameRoute = function (a, b) { return String(a).split("#")[0].replace(/\/$/, "").toLowerCase() === String(b).split("#")[0].replace(/\/$/, "").toLowerCase(); };
+
+	function drawBoard() {
+		var board = $("#board");
+		board.innerHTML = "";
+		frames.clear();
+		live = {};
+		var d = deck();
+		if (!d.columns.length) {
+			board.innerHTML = '<div class="empty"><h2>This deck is empty</h2><p class="muted">Add a column to follow a timeline, a search, a list or a profile side by side.</p><button class="post" type="button">' + icon("addcol") + "<span>Add column</span></button></div>";
+			board.querySelector("button").onclick = openAdder;
+			return;
+		}
+		d.columns.forEach(function (c) { board.appendChild(columnEl(c)); });
+		var tail = document.createElement("div");
+		tail.className = "add-tail";
+		tail.innerHTML = '<button class="pill" type="button">' + icon("addcol") + "Add column</button>";
+		tail.querySelector("button").onclick = openAdder;
+		board.appendChild(tail);
+	}
+	function columnEl(c) {
+		var t = TYPES[c.type] || TYPES.link;
+		var el = document.createElement("section");
+		el.className = "col " + (c.width || "m");
+		el.dataset.id = c.id;
+		el.setAttribute("aria-label", t.title(c.arg || ""));
+		el.innerHTML =
+			'<div class="col-head">' +
+				'<span class="grip" draggable="true" title="Drag to move">' + icon("grip") + "</span>" +
+				'<button class="icon-btn back" type="button" aria-label="Back" hidden>' + icon("back") + "</button>" +
+				'<span class="col-badge">' + icon(ICONS[c.type] ? c.type : "link") + "</span>" +
+				'<button class="col-title" type="button" title="Scroll to top"><small></small><b></b></button>' +
+				'<button class="icon-btn" type="button" data-act="refresh" aria-label="Refresh">' + icon("refresh") + "</button>" +
+				'<button class="icon-btn" type="button" data-act="settings" aria-label="Column settings">' + icon("gear") + "</button>" +
+			"</div>";
+		if (needsMe(c) && !state.me) {
+			var wait = document.createElement("div");
+			wait.className = "empty";
+			wait.innerHTML = '<p class="muted">Waiting for your account to load…</p>';
+			el.appendChild(wait);
+		} else {
+			var f = document.createElement("iframe");
+			f.className = "col-frame";
+			f.title = t.title(c.arg || "");
+			f.allow = "clipboard-write; autoplay; fullscreen; web-share";
+			f.src = ORIGIN + basePath(c);
+			el.appendChild(f);
+			f.addEventListener("load", function () { if (f.contentWindow) frames.set(f.contentWindow, c.id); });
+			// the column's first report can come before load fires
+			setTimeout(function () { if (f.contentWindow) frames.set(f.contentWindow, c.id); });
+		}
+		el.querySelector(".back").onclick = function () { send(c.id, { xpro: "back" }); };
+		el.querySelector(".col-title").onclick = function () {
+			var d = live[c.id];
+			if (d && !sameRoute(d.path, basePath(c))) send(c.id, { xpro: "go", path: basePath(c) });
+			else send(c.id, { xpro: "top" });
+		};
+		el.querySelector('[data-act="refresh"]').onclick = function () { send(c.id, { xpro: "reload" }); };
+		el.querySelector('[data-act="settings"]').onclick = function (e) { columnMenu(e.currentTarget, c); };
+		dragging(el, c);
+		setTimeout(function () { updateHead(c.id); });
+		return el;
+	}
+	function updateHead(id) {
+		var c = deck().columns.filter(function (x) { return x.id === id; })[0];
+		var el = document.querySelector('.col[data-id="' + id + '"]');
+		if (!c || !el) return;
+		var t = TYPES[c.type] || TYPES.link;
+		var d = live[id];
+		var away = d && !sameRoute(d.path, basePath(c));
+		var page = d && d.title ? d.title.replace(/^\(\d+\+?\)\s*/, "").replace(/\s*\/\s*[^/]*$/, "") : "";
+		el.querySelector(".back").hidden = !away;
+		el.querySelector(".grip").hidden = !!away;
+		el.querySelector(".col-title small").textContent = away ? t.title(c.arg || "") : (t.sub || (state.me ? "@" + state.me.screen_name : CFG.instance));
+		el.querySelector(".col-title b").textContent = away && page ? page : t.title(c.arg || "");
+	}
+	function columnMenu(anchor, c) {
+		var d = deck();
+		var i = d.columns.indexOf(c);
+		var width = function (w) { c.width = w; save(); var el = document.querySelector('.col[data-id="' + c.id + '"]'); el.classList.remove("s", "m", "l"); el.classList.add(w); closeMenu(); };
+		var move = function (by) { d.columns.splice(i, 1); d.columns.splice(i + by, 0, c); save(); drawBoard(); };
+		var pop = menu(anchor, [
+			{ html: '<div class="label">Column width</div><div class="seg">' + ["s", "m", "l"].map(function (w) { return '<button type="button" data-w="' + w + '" class="' + ((c.width || "m") === w ? "on" : "") + '">' + { s: "Narrow", m: "Medium", l: "Wide" }[w] + "</button>"; }).join("") + "</div>" },
+			i > 0 && { label: "Move left", icon: "back", run: function () { move(-1); } },
+			i < d.columns.length - 1 && { label: "Move right", icon: "back", flip: true, run: function () { move(1); } },
+			{ label: "Open in new tab", icon: "open", href: ORIGIN + ((live[c.id] && live[c.id].path) || basePath(c)) },
+			{ label: "Remove column", icon: "close", danger: true, run: function () { d.columns.splice(i, 1); save(); drawBoard(); } }
+		]);
+		pop.querySelectorAll("[data-w]").forEach(function (b) { b.onclick = function () { width(b.dataset.w); }; });
+	}
+	function addColumn(type, arg) {
+		var d = deck();
+		var c = { id: uid(), type: type, arg: arg || "", width: "m" };
+		d.columns.push(c);
+		save(); drawBoard();
+		var el = document.querySelector('.col[data-id="' + c.id + '"]');
+		if (el) el.scrollIntoView({ behavior: "smooth", inline: "end", block: "nearest" });
+	}
+
+	// reordering by the grip; the frames would swallow the drag, so they are
+	// switched off while it lasts
+	var dragId = null;
+	function dragging(el, c) {
+		var grip = el.querySelector(".grip");
+		grip.addEventListener("dragstart", function (e) {
+			dragId = c.id;
+			e.dataTransfer.effectAllowed = "move";
+			e.dataTransfer.setData("text/plain", c.id);
+			e.dataTransfer.setDragImage(el, 20, 20);
+			el.classList.add("dragging");
+			document.querySelectorAll(".col").forEach(function (x) { x.classList.add("busy"); });
+		});
+		grip.addEventListener("dragend", function () {
+			dragId = null;
+			document.querySelectorAll(".col").forEach(function (x) { x.classList.remove("busy", "dragging", "drop-before", "drop-after"); });
+		});
+		el.addEventListener("dragover", function (e) {
+			if (!dragId || dragId === c.id) return;
+			e.preventDefault();
+			var r = el.getBoundingClientRect();
+			var before = e.clientX < r.left + r.width / 2;
+			el.classList.toggle("drop-before", before);
+			el.classList.toggle("drop-after", !before);
+		});
+		el.addEventListener("dragleave", function () { el.classList.remove("drop-before", "drop-after"); });
+		el.addEventListener("drop", function (e) {
+			e.preventDefault();
+			if (!dragId || dragId === c.id) return;
+			var d = deck();
+			var from = d.columns.filter(function (x) { return x.id === dragId; })[0];
+			var before = el.classList.contains("drop-before");
+			d.columns.splice(d.columns.indexOf(from), 1);
+			d.columns.splice(d.columns.indexOf(c) + (before ? 0 : 1), 0, from);
+			save(); drawBoard();
+		});
+	}
+
+	// --- add column --------------------------------------------------------
+	function openAdder() {
+		var a = $("#adder");
+		a.hidden = false;
+		drawChoices();
+		setTimeout(function () { a.querySelector("input").focus(); });
+	}
+	function closeAdder() { $("#adder").hidden = true; }
+	function drawChoices() {
+		var box = $("#choices");
+		box.innerHTML = "";
+		Object.keys(TYPES).forEach(function (k) {
+			var t = TYPES[k];
+			if (k === "search") return;
+			var item = document.createElement("div");
+			item.innerHTML = '<button class="choice" type="button">' + icon(k) + "<div><b>" + esc(t.label) + "</b><span>" + esc(t.desc) + "</span></div></button>";
+			item.firstChild.onclick = function () {
+				if (!t.ask) { addColumn(k); closeAdder(); return; }
+				if (item.querySelector(".ask")) { item.querySelector("input").focus(); return; }
+				box.querySelectorAll(".ask").forEach(function (x) { x.remove(); });
+				var f = document.createElement("form");
+				f.className = "ask";
+				f.innerHTML = '<label class="searchbox"><input placeholder="' + esc(t.ask) + '" aria-label="' + esc(t.ask) + '" autocomplete="off"></label><button class="small-btn" type="submit">Add</button>';
+				f.onsubmit = function (e) {
+					e.preventDefault();
+					var raw = f.querySelector("input").value;
+					var arg = cleanArg(k, raw);
+					if (!arg && !(t.optional && !raw.trim())) { f.querySelector("input").setCustomValidity("That doesn't look right"); f.querySelector("input").reportValidity(); return; }
+					addColumn(k, arg); closeAdder();
+				};
+				f.querySelector("input").oninput = function () { this.setCustomValidity(""); };
+				item.appendChild(f);
+				f.querySelector("input").focus();
+			};
+			box.appendChild(item);
+		});
+	}
+	$("#adder-search").onsubmit = function (e) {
+		e.preventDefault();
+		var q = this.q.value.trim();
+		if (!q) return;
+		this.q.value = "";
+		addColumn("search", q);
+		closeAdder();
+	};
+
+	// --- menus and dialogs -------------------------------------------------
+	var layer = $("#layer");
+	function closeMenu() { layer.classList.remove("open"); layer.innerHTML = ""; }
+	layer.addEventListener("mousedown", function (e) { if (e.target === layer) closeMenu(); });
+	function menu(anchor, items) {
+		closeMenu();
+		var pop = document.createElement("div");
+		pop.className = "menu pop";
+		pop.setAttribute("role", "menu");
+		items.filter(Boolean).forEach(function (it) {
+			if (it.html) { pop.insertAdjacentHTML("beforeend", it.html); return; }
+			var b = document.createElement(it.href ? "a" : "button");
+			if (it.href) { b.href = it.href; b.target = "_blank"; b.rel = "noopener"; } else b.type = "button";
+			b.setAttribute("role", "menuitem");
+			if (it.danger) b.className = "danger";
+			b.innerHTML = icon(it.icon) + "<span>" + esc(it.label) + "</span>";
+			if (it.flip) b.querySelector("svg").style.transform = "scaleX(-1)";
+			b.onclick = function () { closeMenu(); if (it.run) it.run(); };
+			pop.appendChild(b);
+		});
+		layer.appendChild(pop);
+		layer.classList.add("open");
+		var r = anchor.getBoundingClientRect();
+		var w = pop.offsetWidth, h = pop.offsetHeight;
+		pop.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + "px";
+		pop.style.top = (r.bottom + 4 + h > innerHeight - 8 ? Math.max(8, r.top - h - 4) : r.bottom + 4) + "px";
+		var first = pop.querySelector("button,a");
+		if (first) first.focus();
+		return pop;
+	}
+	var modal = $("#modal");
+	function closeModal() { modal.classList.remove("open"); modal.innerHTML = ""; composer = null; }
+	modal.addEventListener("mousedown", function (e) { if (e.target === modal) closeModal(); });
+	document.addEventListener("keydown", function (e) {
+		if (e.key !== "Escape") return;
+		if (layer.classList.contains("open")) closeMenu();
+		else if (modal.classList.contains("open")) closeModal();
+		else if (!$("#adder").hidden) closeAdder();
+	});
+	function form(title, fields, submit) {
+		return new Promise(function (done) {
+			modal.innerHTML = '<form class="sheet"><div class="sheet-head"><button class="icon-btn" type="button" aria-label="Close">' + icon("close") + "</button><h3>" + esc(title) + '</h3></div><div class="fields">' +
+				fields.map(function (x) { return "<label>" + esc(x.label) + '<input name="' + x.name + '" maxlength="' + (x.max || 80) + '"' + (x.required ? " required" : "") + ' value="' + esc(x.value || "") + '"></label>'; }).join("") +
+				'<div class="row"><button class="ghost" type="button">Cancel</button><button class="small-btn" type="submit">' + esc(submit) + "</button></div></div></form>";
+			var f = modal.querySelector("form");
+			modal.classList.add("open");
+			var finish = function (v) { closeModal(); done(v); };
+			f.querySelector(".sheet-head button").onclick = function () { finish(null); };
+			f.querySelector(".ghost").onclick = function () { finish(null); };
+			f.onsubmit = function (e) {
+				e.preventDefault();
+				var v = {};
+				fields.forEach(function (x) { v[x.name] = f.elements[x.name].value.trim(); });
+				finish(v);
+			};
+			f.querySelector("input").focus();
+		});
+	}
+
+	// the composer is the client's own, in a frame of its own; it closes when
+	// the client leaves the compose page (posted, or cancelled)
+	var composer = null;
+	function compose() {
+		closeModal();
+		modal.innerHTML = '<div class="sheet compose"><iframe title="Post" allow="clipboard-write; autoplay"></iframe></div>';
+		var f = modal.querySelector("iframe");
+		composer = { win: null, seen: false };
+		f.src = ORIGIN + "/compose/post";
+		composer.win = f.contentWindow;
+		modal.classList.add("open");
+	}
+	function composerState(d) {
+		if (/^\/compose\//.test(d.path)) { composer.seen = true; return; }
+		if (composer.seen) {
+			closeModal();
+			// the new post shows up in the timelines
+			deck().columns.forEach(function (c) { if (c.type === "home" || (state.me && c.type === "profile" && c.arg.toLowerCase() === state.me.screen_name.toLowerCase())) send(c.id, { xpro: "top" }); });
+		}
+	}
+
+	// --- wiring ------------------------------------------------------------
+	$("#post").onclick = compose;
+	$("#add-col").onclick = openAdder;
+	$("#find").onclick = openAdder;
+	$("#adder-close").onclick = closeAdder;
+	$("#new-deck").onclick = function () { editDeck(null); };
+	$("#collapse").onclick = function () { state.slim = !state.slim; save(); document.body.classList.toggle("slim", state.slim); };
+	$("#more").onclick = function (e) {
+		menu(e.currentTarget, [
+			{ label: "Reload all columns", icon: "refresh", run: function () { deck().columns.forEach(function (c) { send(c.id, { xpro: "reload" }); }); } },
+			{ label: "Open " + CFG.instance, icon: "open", href: ORIGIN + "/home" },
+			{ label: "Settings", icon: "gear", href: ORIGIN + "/settings" },
+			{ label: "Reset Xitter Pro", icon: "close", danger: true, run: function () {
+				if (!confirm("Remove every deck and column on this device?")) return;
+				state = defaults(); save(); drawMe(); drawDecks(); drawBoard();
+			} }
+		]);
+	};
+	// back from signing in on the instance: start again
+	window.addEventListener("focus", function () { if (signedOut) { signedOut = false; drawBoard(); } });
+
+	document.body.classList.toggle("slim", !!state.slim);
+	drawMe(); drawDecks(); drawBoard();
+})();
+</script>
+</body></html>
