@@ -1,7 +1,7 @@
 From 63f14a18600ab5b4802d63b729566e76b9159d84 Mon Sep 17 00:00:00 2001
 From: jyejax <jyeridley@gmail.com>
 Date: Thu, 22 Oct 2026 08:46:43 +0000
-Subject: [PATCH] Add Xitter Pro, a TweetDeck-style deck of columns
+Subject: [PATCH 1/2] Add Xitter Pro, a TweetDeck-style deck of columns
 
 The deck (src/pro.html) is served at /i/pro and, with PRO_ORIGIN set, on its
 own address such as pro.xitter.space. Each column is the instance's client in
