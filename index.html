@@ -80,6 +80,11 @@ body.slim #collapse svg{transform:scaleX(-1)}
 .col-title{flex:1;min-width:0;text-align:left;padding:2px 4px;border-radius:6px}
 .col-title small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .col-title b{display:block;font-size:19px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.unread{min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--accent-text);font-size:12px;font-weight:700;display:inline-grid;place-items:center;flex:none}
+.col-filters{display:flex;flex-wrap:wrap;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line);flex:none}
+.chip{font-size:13px;padding:3px 10px;border-radius:999px;background:var(--raise);color:var(--muted)}
+.icon-btn.on{color:var(--accent)}
+.col.focus{box-shadow:inset 0 0 0 2px var(--accent)}
 .col-frame{flex:1;width:100%;border:0;background:var(--panel);display:block}
 .col.busy .col-frame{pointer-events:none}
 .col-menu{position:absolute;top:56px;right:8px;z-index:5}
@@ -137,8 +142,17 @@ body.slim #collapse svg{transform:scaleX(-1)}
 .sheet label input:focus{outline:0;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 .sheet .row{display:flex;gap:10px;justify-content:flex-end;margin-top:6px}
 .sheet .ghost{height:40px;padding:0 18px;border-radius:999px;border:1px solid var(--line);font-weight:700}
+.sheet select,.sheet label input[type=number]{height:44px;border:1px solid var(--line);border-radius:6px;background:var(--panel);padding:0 10px;font-size:16px;color:var(--text)}
+.sheet label.check{display:flex;align-items:center;gap:10px;color:var(--text);font-size:15px;cursor:pointer}
+.sheet label.check input{width:18px;height:18px;accent-color:var(--accent)}
+.sheet .pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.sheet h4{margin:6px 0 -4px;font-size:15px}
+.sheet .note{color:var(--muted);font-size:13px;margin:-6px 0 0}
+.keys{display:grid;grid-template-columns:auto 1fr;gap:10px 18px;padding:4px 24px 24px;overflow:auto}
+.keys kbd{font:600 13px var(--font);padding:3px 8px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;white-space:nowrap;justify-self:start}
 #banner{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:25;background:var(--accent);color:var(--accent-text);padding:12px 12px 12px 18px;border-radius:12px;display:none;align-items:center;gap:14px;box-shadow:0 4px 20px rgb(0 0 0 / .4);max-width:calc(100% - 32px)}
 #banner.open{display:flex}
+#banner button{color:inherit;font-size:20px;padding:0 4px}
 #banner a{color:inherit;font-weight:700;background:rgb(255 255 255 / .2);padding:8px 14px;border-radius:999px;text-decoration:none;white-space:nowrap}
 
 ::-webkit-scrollbar{width:10px;height:10px}
@@ -230,6 +244,16 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		messages: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3.5 6.5 8.5 6 8.5-6"/>',
 		likes: '<path d="M12 20s-7.5-4.6-9-9.5C2 7 4.5 4.5 7.5 4.5c2 0 3.5 1.2 4.5 2.7 1-1.5 2.5-2.7 4.5-2.7 3 0 5.5 2.5 4.5 6-1.5 4.9-9 9.5-9 9.5z"/>',
 		scheduled: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M12 13v3l2 1"/>',
+		following: '<circle cx="9" cy="8" r="4"/><path d="M2 21c.9-4.2 3.8-6.5 7-6.5 1.6 0 3 .5 4.2 1.4M15 18l2 2 4-4.5"/>',
+		mentions: '<circle cx="12" cy="12" r="4"/><path d="M16 8v5a2.5 2.5 0 0 0 5 0v-1a9 9 0 1 0-3.5 7.1"/>',
+		filter: '<path d="M3 5h18l-7 8.5V20l-4-2v-4.5z"/>',
+		edit: '<path d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4"/>',
+		copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"/>',
+		up: '<path d="M12 19V5M6 11l6-6 6 6"/>',
+		keyboard: '<rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/>',
+		download: '<path d="M12 4v11M7 10l5 5 5-5M5 20h14"/>',
+		upload: '<path d="M12 15V4M7 9l5-5 5 5M5 20h14"/>',
+		clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
 		link: '<path d="M10 14a4 4 0 0 0 6 .5l3-3a4 4 0 0 0-5.7-5.7l-1.3 1.3M14 10a4 4 0 0 0-6-.5l-3 3a4 4 0 0 0 5.7 5.7l1.3-1.3"/>',
 		gear: '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
 		back: '<path d="M19 12H5M11 18l-6-6 6-6"/>',
@@ -248,14 +272,16 @@ body.slim #collapse svg{transform:scaleX(-1)}
 	// what a column can show: its address on the instance, and what it asks for
 	var TYPES = {
 		home: { label: "Home Timeline", desc: "See recommended posts first, or only the accounts you follow.", path: function () { return "/home"; }, title: function () { return "Home"; } },
+		following: { label: "Following", desc: "Posts from the accounts you follow, newest first.", filters: true, path: function (a, me, c) { return searchPath("filter:follows", c); }, title: function () { return "Following"; } },
 		lists: { label: "Lists", desc: "View your own or other people's lists.", ask: "List link or ID (empty for your lists)", optional: true, path: function (a, me) { return a ? "/i/lists/" + a : "/" + me + "/lists"; }, title: function (a) { return a ? "List" : "Lists"; } },
 		communities: { label: "Communities", desc: "View the Communities that you're a part of.", ask: "Community link or ID (empty for yours)", optional: true, path: function (a, me) { return a ? "/i/communities/" + a : "/" + me + "/communities"; }, title: function (a) { return a ? "Community" : "Communities"; } },
-		search: { label: "Search", desc: "Find what you're looking for.", ask: "Search terms or operators", path: function (a) { return "/search?q=" + encodeURIComponent(a) + "&src=typed_query&f=live"; }, title: function (a) { return a; }, sub: "Search" },
+		search: { label: "Search", desc: "Find what you're looking for.", ask: "Search terms or operators", filters: true, path: function (a, me, c) { return searchPath(a, c); }, title: function (a) { return a; }, sub: "Search" },
 		explore: { label: "Explore", desc: "Check what's trending on " + CFG.instance + ".", path: function () { return "/explore"; }, title: function () { return "Explore"; } },
 		trending: { label: "Trending", desc: "What people are talking about right now.", path: function () { return "/explore/tabs/trending"; }, title: function () { return "Trending"; } },
-		profile: { label: "Profiles", desc: "Find a profile and see what they've been up to.", ask: "@username", path: function (a) { return "/" + a; }, title: function (a) { return a; }, sub: "Profile" },
-		notifications: { label: "Notifications", desc: "Keep up with your notifications and mentions.", path: function () { return "/notifications"; }, title: function () { return "Notifications"; } },
-		messages: { label: "Messages", desc: "Your direct message conversations.", path: function () { return "/messages"; }, title: function () { return "Messages"; } },
+		profile: { label: "Profiles", desc: "Find a profile and see what they've been up to.", ask: "@username", filters: true, path: function (a, me, c) { return filtered(c) ? searchPath("from:" + a, c) : "/" + a; }, title: function (a) { return a; }, sub: "Profile" },
+		notifications: { label: "Notifications", desc: "Keep up with your notifications and mentions.", unread: true, path: function () { return "/notifications"; }, title: function () { return "Notifications"; } },
+		mentions: { label: "Mentions", desc: "Posts that mention you.", unread: true, path: function () { return "/notifications/mentions"; }, title: function () { return "Mentions"; } },
+		messages: { label: "Messages", desc: "Your direct message conversations.", unread: true, path: function () { return "/messages"; }, title: function () { return "Messages"; } },
 		bookmarks: { label: "Bookmarks", desc: "The posts you've saved for later.", path: function () { return "/i/bookmarks"; }, title: function () { return "Bookmarks"; } },
 		likes: { label: "Likes", desc: "Everything you've liked.", path: function (a, me) { return "/" + me + "/likes"; }, title: function () { return "Likes"; } },
 		scheduled: { label: "Scheduled posts", desc: "View your scheduled posts.", path: function () { return "/compose/post/unsent/scheduled"; }, title: function () { return "Scheduled"; } },
@@ -286,11 +312,49 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		return v;
 	}
 
+	// Column filters, as X Pro has them, written as the search operators the
+	// instance knows (src/search.ts): content type, replies, accounts you
+	// follow, engagement, and Latest or Top
+	var CONTENT = { all: "All posts", media: "With media", images: "With images", videos: "With videos", links: "With links", quote: "Quotes" };
+	var filtered = function (c) {
+		var f = c && c.filters;
+		return !!f && ((f.content && f.content !== "all") || (f.replies && f.replies !== "include") || f.follows || f.faves > 0 || f.reposts > 0 || f.answers > 0 || f.top);
+	};
+	function filterQuery(base, f) {
+		var q = [base];
+		f = f || {};
+		if (f.content && f.content !== "all") q.push("filter:" + f.content);
+		if (f.replies === "exclude") q.push("-filter:replies");
+		if (f.replies === "only") q.push("filter:replies");
+		if (f.follows && base.indexOf("filter:follows") < 0) q.push("filter:follows");
+		if (f.faves > 0) q.push("min_faves:" + f.faves);
+		if (f.reposts > 0) q.push("min_retweets:" + f.reposts);
+		if (f.answers > 0) q.push("min_replies:" + f.answers);
+		return q.join(" ").trim();
+	}
+	function searchPath(base, c) {
+		var f = (c && c.filters) || {};
+		return "/search?q=" + encodeURIComponent(filterQuery(base, f)) + "&src=typed_query" + (f.top ? "" : "&f=live");
+	}
+	function filterChips(c) {
+		var f = c.filters || {}, out = [];
+		if (f.content && f.content !== "all") out.push(CONTENT[f.content]);
+		if (f.replies === "exclude") out.push("No replies");
+		if (f.replies === "only") out.push("Only replies");
+		if (f.follows) out.push("People you follow");
+		if (f.faves > 0) out.push(f.faves + "+ likes");
+		if (f.reposts > 0) out.push(f.reposts + "+ reposts");
+		if (f.answers > 0) out.push(f.answers + "+ replies");
+		if (f.top) out.push("Top");
+		return out;
+	}
+
 	// --- saved state -------------------------------------------------------
 	var defaults = function () {
 		var id = uid();
 		return {
 			v: 1, active: id, slim: false, me: null,
+			prefs: { width: "m", notify: false, sound: false },
 			decks: [{ id: id, name: "Personal", emoji: "⭐", columns: [
 				{ id: uid(), type: "home", width: "m" },
 				{ id: uid(), type: "notifications", width: "m" },
@@ -301,6 +365,7 @@ body.slim #collapse svg{transform:scaleX(-1)}
 	var state;
 	try { state = JSON.parse(localStorage.getItem(KEY) || "null"); } catch (e) { state = null; }
 	if (!state || state.v !== 1 || !Array.isArray(state.decks) || !state.decks.length) state = defaults();
+	state.prefs = Object.assign({ width: "m", notify: false, sound: false }, state.prefs);
 	var save = function () { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} };
 	var deck = function () { return state.decks.filter(function (d) { return d.id === state.active; })[0] || state.decks[0]; };
 
@@ -312,12 +377,15 @@ body.slim #collapse svg{transform:scaleX(-1)}
 	var signedOut = false;
 
 	window.addEventListener("message", function (e) {
-		if (e.origin !== ORIGIN || !e.data || e.data.xpro !== "state") return;
+		if (e.origin !== ORIGIN || !e.data || (e.data.xpro !== "state" && e.data.xpro !== "key")) return;
 		var d = e.data;
 		if (composer && e.source === composer.win) return composerState(d);
 		var id = frames.get(e.source);
 		if (!id) return;
+		if (d.key) return shortcut(d.key);
+		d.loadedAt = (live[id] && live[id].loadedAt) || Date.now();
 		live[id] = d;
+		unread(d.title);
 		if (d.user) {
 			signedOut = false;
 			$("#banner").classList.remove("open");
@@ -337,6 +405,63 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		if (d.bg) applyLook(d.bg, d.accent);
 		updateHead(id);
 	});
+
+	// The client puts the unread count in its page title, "(3) Home / X": the
+	// deck shows it on its notification columns and in its own title, and says
+	// so on the desktop when it goes up
+	var count = 0;
+	function unread(title) {
+		var m = /^\((\d+)(\+?)\)/.exec(title || "");
+		var n = m ? Number(m[1]) : 0;
+		if (n === count) return;
+		var more = n > count;
+		count = n;
+		document.title = (n ? "(" + n + (m[2] || "") + ") " : "") + CFG.instance + " Pro";
+		document.querySelectorAll(".col").forEach(function (el) {
+			var c = deck().columns.filter(function (x) { return x.id === el.dataset.id; })[0];
+			var b = el.querySelector(".unread");
+			if (!c || !(TYPES[c.type] || {}).unread || !b) return;
+			b.textContent = n + (m && m[2] ? "+" : "");
+			b.hidden = !n;
+		});
+		if (!more) return;
+		if (state.prefs.sound) beep();
+		if (state.prefs.notify && document.hidden && window.Notification && Notification.permission === "granted") {
+			try {
+				var note = new Notification(CFG.instance + " Pro", { body: n === 1 ? "You have a new notification" : "You have " + n + " new notifications", icon: ORIGIN + "/public/favicon.png", tag: "xitter-pro" });
+				note.onclick = function () { window.focus(); note.close(); };
+			} catch (err) {}
+		}
+	}
+	var audio = null;
+	function beep() {
+		try {
+			audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+			var o = audio.createOscillator(), g = audio.createGain();
+			o.frequency.value = 880;
+			g.gain.setValueAtTime(0.0001, audio.currentTime);
+			g.gain.exponentialRampToValueAtTime(0.15, audio.currentTime + 0.02);
+			g.gain.exponentialRampToValueAtTime(0.0001, audio.currentTime + 0.25);
+			o.connect(g); g.connect(audio.destination);
+			o.start(); o.stop(audio.currentTime + 0.3);
+		} catch (err) {}
+	}
+
+	// Auto-refresh: a column set to it reloads every so many minutes, but only
+	// while it is scrolled to the top and the pointer is somewhere else
+	setInterval(function () {
+		var now = Date.now();
+		deck().columns.forEach(function (c) {
+			if (!c.refresh) return;
+			var el = document.querySelector('.col[data-id="' + c.id + '"]');
+			var d = live[c.id];
+			if (!el || !d || d.top === false || el.matches(":hover")) return;
+			if (!d.loadedAt) d.loadedAt = now;
+			if (now - d.loadedAt < c.refresh * 60000) return;
+			d.loadedAt = now;
+			send(c.id, { xpro: "reload" });
+		});
+	}, 15000);
 	var send = function (id, msg) {
 		var f = document.querySelector('.col[data-id="' + id + '"] iframe');
 		if (f && f.contentWindow) f.contentWindow.postMessage(Object.assign({ xpro: msg.xpro }, msg), ORIGIN);
@@ -389,12 +514,21 @@ body.slim #collapse svg{transform:scaleX(-1)}
 			row.tabIndex = 0;
 			row.title = d.name;
 			row.innerHTML = '<span class="emoji">' + esc(d.emoji || "📁") + '</span><span class="name">' + esc(d.name) + '</span><button class="icon-btn" type="button" aria-label="Edit deck">' + icon("wrench") + "</button>";
-			row.onclick = function () { if (state.active !== d.id) { state.active = d.id; save(); drawDecks(); drawBoard(); } };
+			row.onclick = function () { openDeck(d.id); };
 			row.onkeydown = function (e) { if (e.key === "Enter" && e.target === row) row.click(); };
 			row.querySelector("button").onclick = function (e) {
 				e.stopPropagation();
 				menu(e.currentTarget, [
-					{ label: "Edit deck", icon: "wrench", run: function () { editDeck(d); } },
+					{ label: "Edit deck", icon: "edit", run: function () { editDeck(d); } },
+					{ label: "Duplicate deck", icon: "copy", run: function () {
+						var copy = JSON.parse(JSON.stringify(d));
+						copy.id = uid(); copy.name = d.name + " copy";
+						copy.columns.forEach(function (c) { c.id = uid(); });
+						state.decks.splice(state.decks.indexOf(d) + 1, 0, copy);
+						state.active = copy.id; save(); drawDecks(); drawBoard();
+					} },
+					state.decks.indexOf(d) > 0 && { label: "Move up", icon: "up", run: function () { var i = state.decks.indexOf(d); state.decks.splice(i, 1); state.decks.splice(i - 1, 0, d); save(); drawDecks(); } },
+					state.decks.indexOf(d) < state.decks.length - 1 && { label: "Move down", icon: "up", flip: "y", run: function () { var i = state.decks.indexOf(d); state.decks.splice(i, 1); state.decks.splice(i + 1, 0, d); save(); drawDecks(); } },
 					state.decks.length > 1 && { label: "Delete deck", icon: "close", danger: true, run: function () {
 						if (!confirm('Delete the deck "' + d.name + '"?')) return;
 						state.decks = state.decks.filter(function (x) { return x !== d; });
@@ -405,6 +539,11 @@ body.slim #collapse svg{transform:scaleX(-1)}
 			};
 			list.appendChild(row);
 		});
+	}
+	function openDeck(id) {
+		if (state.active === id) return;
+		state.active = id; save(); drawDecks(); drawBoard();
+		try { history.replaceState(null, "", "#deck=" + id); } catch (e) {}
 	}
 	function editDeck(d) {
 		form(d ? "Edit deck" : "New deck", [
@@ -424,7 +563,8 @@ body.slim #collapse svg{transform:scaleX(-1)}
 	}
 
 	// --- columns -----------------------------------------------------------
-	var basePath = function (c) { var t = TYPES[c.type]; return t ? t.path(c.arg || "", state.me ? state.me.screen_name : "") : "/home"; };
+	var basePath = function (c) { var t = TYPES[c.type]; return t ? t.path(c.arg || "", state.me ? state.me.screen_name : "", c) : "/home"; };
+	var titleOf = function (c) { return c.title || (TYPES[c.type] || TYPES.link).title(c.arg || ""); };
 	var needsMe = function (c) { return (c.type === "likes" || ((c.type === "lists" || c.type === "communities") && !c.arg)); };
 	var sameRoute = function (a, b) { return String(a).split("#")[0].replace(/\/$/, "").toLowerCase() === String(b).split("#")[0].replace(/\/$/, "").toLowerCase(); };
 
@@ -451,16 +591,20 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		var el = document.createElement("section");
 		el.className = "col " + (c.width || "m");
 		el.dataset.id = c.id;
-		el.setAttribute("aria-label", t.title(c.arg || ""));
+		el.setAttribute("aria-label", titleOf(c));
 		el.innerHTML =
 			'<div class="col-head">' +
 				'<span class="grip" draggable="true" title="Drag to move">' + icon("grip") + "</span>" +
 				'<button class="icon-btn back" type="button" aria-label="Back" hidden>' + icon("back") + "</button>" +
 				'<span class="col-badge">' + icon(ICONS[c.type] ? c.type : "link") + "</span>" +
 				'<button class="col-title" type="button" title="Scroll to top"><small></small><b></b></button>' +
+				(t.unread ? '<span class="unread" hidden></span>' : "") +
+				(t.filters ? '<button class="icon-btn' + (filtered(c) ? " on" : "") + '" type="button" data-act="filters" aria-label="Filters">' + icon("filter") + "</button>" : "") +
 				'<button class="icon-btn" type="button" data-act="refresh" aria-label="Refresh">' + icon("refresh") + "</button>" +
 				'<button class="icon-btn" type="button" data-act="settings" aria-label="Column settings">' + icon("gear") + "</button>" +
 			"</div>";
+		var chips = (t.filters ? filterChips(c) : []).concat(c.refresh ? ["Refreshes every " + c.refresh + " min"] : []);
+		if (chips.length) el.insertAdjacentHTML("beforeend", '<div class="col-filters">' + chips.map(function (x) { return '<span class="chip">' + esc(x) + "</span>"; }).join("") + "</div>");
 		if (needsMe(c) && !state.me) {
 			var wait = document.createElement("div");
 			wait.className = "empty";
@@ -469,7 +613,7 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		} else {
 			var f = document.createElement("iframe");
 			f.className = "col-frame";
-			f.title = t.title(c.arg || "");
+			f.title = titleOf(c);
 			f.allow = "clipboard-write; autoplay; fullscreen; web-share";
 			f.src = ORIGIN + basePath(c);
 			el.appendChild(f);
@@ -485,6 +629,9 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		};
 		el.querySelector('[data-act="refresh"]').onclick = function () { send(c.id, { xpro: "reload" }); };
 		el.querySelector('[data-act="settings"]').onclick = function (e) { columnMenu(e.currentTarget, c); };
+		if (t.filters) el.querySelector('[data-act="filters"]').onclick = function () { editFilters(c); };
+		var badge = el.querySelector(".unread");
+		if (badge && count) { badge.textContent = count; badge.hidden = false; }
 		dragging(el, c);
 		setTimeout(function () { updateHead(c.id); });
 		return el;
@@ -499,8 +646,8 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		var page = d && d.title ? d.title.replace(/^\(\d+\+?\)\s*/, "").replace(/\s*\/\s*[^/]*$/, "") : "";
 		el.querySelector(".back").hidden = !away;
 		el.querySelector(".grip").hidden = !!away;
-		el.querySelector(".col-title small").textContent = away ? t.title(c.arg || "") : (t.sub || (state.me ? "@" + state.me.screen_name : CFG.instance));
-		el.querySelector(".col-title b").textContent = away && page ? page : t.title(c.arg || "");
+		el.querySelector(".col-title small").textContent = away ? titleOf(c) : (t.sub || (state.me ? "@" + state.me.screen_name : CFG.instance));
+		el.querySelector(".col-title b").textContent = away && page ? page : titleOf(c);
 	}
 	function columnMenu(anchor, c) {
 		var d = deck();
@@ -509,16 +656,28 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		var move = function (by) { d.columns.splice(i, 1); d.columns.splice(i + by, 0, c); save(); drawBoard(); };
 		var pop = menu(anchor, [
 			{ html: '<div class="label">Column width</div><div class="seg">' + ["s", "m", "l"].map(function (w) { return '<button type="button" data-w="' + w + '" class="' + ((c.width || "m") === w ? "on" : "") + '">' + { s: "Narrow", m: "Medium", l: "Wide" }[w] + "</button>"; }).join("") + "</div>" },
+			TYPES[c.type] && TYPES[c.type].filters && { label: "Filters", icon: "filter", run: function () { editFilters(c); } },
+			{ label: "Rename column", icon: "edit", run: function () {
+				form("Rename column", [{ name: "title", label: "Title (empty for the default)", value: c.title || "", max: 60 }], "Save").then(function (v) {
+					if (!v) return;
+					c.title = v.title; save(); updateHead(c.id);
+					var el = document.querySelector('.col[data-id="' + c.id + '"]');
+					if (el) el.setAttribute("aria-label", titleOf(c));
+				});
+			} },
+			{ html: '<div class="label">Auto-refresh</div><div class="seg">' + [0, 1, 5, 15].map(function (m) { return '<button type="button" data-r="' + m + '" class="' + ((c.refresh || 0) === m ? "on" : "") + '">' + (m ? m + " min" : "Off") + "</button>"; }).join("") + "</div>" },
 			i > 0 && { label: "Move left", icon: "back", run: function () { move(-1); } },
 			i < d.columns.length - 1 && { label: "Move right", icon: "back", flip: true, run: function () { move(1); } },
+			{ label: "Duplicate column", icon: "copy", run: function () { var copy = JSON.parse(JSON.stringify(c)); copy.id = uid(); d.columns.splice(i + 1, 0, copy); save(); drawBoard(); } },
 			{ label: "Open in new tab", icon: "open", href: ORIGIN + ((live[c.id] && live[c.id].path) || basePath(c)) },
 			{ label: "Remove column", icon: "close", danger: true, run: function () { d.columns.splice(i, 1); save(); drawBoard(); } }
 		]);
 		pop.querySelectorAll("[data-w]").forEach(function (b) { b.onclick = function () { width(b.dataset.w); }; });
+		pop.querySelectorAll("[data-r]").forEach(function (b) { b.onclick = function () { c.refresh = Number(b.dataset.r); save(); closeMenu(); drawBoard(); }; });
 	}
 	function addColumn(type, arg) {
 		var d = deck();
-		var c = { id: uid(), type: type, arg: arg || "", width: "m" };
+		var c = { id: uid(), type: type, arg: arg || "", width: state.prefs.width || "m" };
 		d.columns.push(c);
 		save(); drawBoard();
 		var el = document.querySelector('.col[data-id="' + c.id + '"]');
@@ -625,7 +784,7 @@ body.slim #collapse svg{transform:scaleX(-1)}
 			b.setAttribute("role", "menuitem");
 			if (it.danger) b.className = "danger";
 			b.innerHTML = icon(it.icon) + "<span>" + esc(it.label) + "</span>";
-			if (it.flip) b.querySelector("svg").style.transform = "scaleX(-1)";
+			if (it.flip) b.querySelector("svg").style.transform = it.flip === "y" ? "scaleY(-1)" : "scaleX(-1)";
 			b.onclick = function () { closeMenu(); if (it.run) it.run(); };
 			pop.appendChild(b);
 		});
@@ -648,23 +807,40 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		else if (modal.classList.contains("open")) closeModal();
 		else if (!$("#adder").hidden) closeAdder();
 	});
-	function form(title, fields, submit) {
+	// a dialog of fields: text (default), select, check, number; also headings,
+	// notes, raw html and groups of fields side by side
+	function field(x) {
+		if (x.heading) return "<h4>" + esc(x.heading) + "</h4>";
+		if (x.note) return '<p class="note">' + esc(x.note) + "</p>";
+		if (x.html) return x.html;
+		if (x.group) return '<div class="pair">' + x.group.map(field).join("") + "</div>";
+		if (x.type === "check") return '<label class="check"><input type="checkbox" name="' + x.name + '"' + (x.value ? " checked" : "") + ">" + esc(x.label) + "</label>";
+		if (x.type === "select") return "<label>" + esc(x.label) + '<select name="' + x.name + '">' + Object.keys(x.options).map(function (k) { return '<option value="' + esc(k) + '"' + (k === x.value ? " selected" : "") + ">" + esc(x.options[k]) + "</option>"; }).join("") + "</select></label>";
+		if (x.type === "number") return "<label>" + esc(x.label) + '<input type="number" min="0" max="1000000" step="1" inputmode="numeric" name="' + x.name + '" value="' + esc(x.value) + '"></label>';
+		return "<label>" + esc(x.label) + '<input name="' + x.name + '" maxlength="' + (x.max || 80) + '"' + (x.required ? " required" : "") + ' value="' + esc(x.value || "") + '"></label>';
+	}
+	var named = function (fields) { return fields.reduce(function (all, x) { return all.concat(x.group ? named(x.group) : x.name ? [x] : []); }, []); };
+	function form(title, fields, submit, onOpen) {
+		fields = fields.filter(Boolean);
 		return new Promise(function (done) {
 			modal.innerHTML = '<form class="sheet"><div class="sheet-head"><button class="icon-btn" type="button" aria-label="Close">' + icon("close") + "</button><h3>" + esc(title) + '</h3></div><div class="fields">' +
-				fields.map(function (x) { return "<label>" + esc(x.label) + '<input name="' + x.name + '" maxlength="' + (x.max || 80) + '"' + (x.required ? " required" : "") + ' value="' + esc(x.value || "") + '"></label>'; }).join("") +
-				'<div class="row"><button class="ghost" type="button">Cancel</button><button class="small-btn" type="submit">' + esc(submit) + "</button></div></div></form>";
+				fields.map(field).join("") +
+				'<div class="row"><button class="ghost" type="button" data-cancel>Cancel</button><button class="small-btn" type="submit">' + esc(submit) + "</button></div></div></form>";
 			var f = modal.querySelector("form");
+			f.style.overflow = "auto";
 			modal.classList.add("open");
 			var finish = function (v) { closeModal(); done(v); };
 			f.querySelector(".sheet-head button").onclick = function () { finish(null); };
-			f.querySelector(".ghost").onclick = function () { finish(null); };
+			f.querySelector("[data-cancel]").onclick = function () { finish(null); };
 			f.onsubmit = function (e) {
 				e.preventDefault();
 				var v = {};
-				fields.forEach(function (x) { v[x.name] = f.elements[x.name].value.trim(); });
+				named(fields).forEach(function (x) { var el = f.elements[x.name]; v[x.name] = el.type === "checkbox" ? el.checked : el.value.trim(); });
 				finish(v);
 			};
-			f.querySelector("input").focus();
+			if (onOpen) onOpen(f);
+			var first = f.querySelector(".fields input,.fields select");
+			if (first) first.focus();
 		});
 	}
 
@@ -689,6 +865,128 @@ body.slim #collapse svg{transform:scaleX(-1)}
 		}
 	}
 
+	// --- filters -----------------------------------------------------------
+	function editFilters(c) {
+		var f = c.filters || {};
+		form("Filters", [
+			{ name: "content", label: "Showing", type: "select", value: f.content || "all", options: CONTENT },
+			{ name: "replies", label: "Replies", type: "select", value: f.replies || "include", options: { include: "Include replies", exclude: "Exclude replies", only: "Only replies" } },
+			c.type !== "following" && { name: "follows", label: "Only from people you follow", type: "check", value: !!f.follows },
+			{ heading: "Engagement" },
+			{ group: [
+				{ name: "faves", label: "Minimum likes", type: "number", value: f.faves || "" },
+				{ name: "reposts", label: "Minimum reposts", type: "number", value: f.reposts || "" },
+				{ name: "answers", label: "Minimum replies", type: "number", value: f.answers || "" }
+			] },
+			{ name: "top", label: "Top posts instead of latest", type: "check", value: !!f.top },
+			c.type === "profile" && { note: "A profile with filters shows as a search of their posts." }
+		], "Apply").then(function (v) {
+			if (!v) return;
+			c.filters = { content: v.content, replies: v.replies, follows: !!v.follows, faves: Number(v.faves) || 0, reposts: Number(v.reposts) || 0, answers: Number(v.answers) || 0, top: !!v.top };
+			save(); drawBoard();
+		});
+	}
+
+	// --- settings ----------------------------------------------------------
+	function openSettings() {
+		var p = state.prefs;
+		form("Xitter Pro settings", [
+			{ html: '<p class="note" style="margin:0">The deck takes its theme and colour from ' + esc(CFG.instance) + ' (<a href="' + esc(ORIGIN) + '/i/display" target="_blank" rel="noopener" style="color:var(--accent)">Display settings</a>).</p>' },
+			{ name: "width", label: "Width of new columns", type: "select", value: p.width, options: { s: "Narrow", m: "Medium", l: "Wide" } },
+			{ heading: "Alerts" },
+			{ name: "notify", label: "Desktop notifications while the deck is in the background", type: "check", value: p.notify },
+			{ name: "sound", label: "Play a sound for new notifications", type: "check", value: p.sound },
+			{ heading: "Decks" },
+			{ html: '<div class="row" style="justify-content:flex-start;flex-wrap:wrap"><button class="ghost" type="button" data-x="export">' + "Export decks</button><button class=\"ghost\" type=\"button\" data-x=\"import\">Import decks</button></div>" },
+			{ note: "Decks are saved in this browser. Export them to move them to another one." }
+		], "Save", function (f) {
+			f.querySelector('[data-x="export"]').onclick = exportDecks;
+			f.querySelector('[data-x="import"]').onclick = importDecks;
+		}).then(function (v) {
+			if (!v) return;
+			var asked = v.notify && !p.notify;
+			state.prefs = { width: v.width, notify: !!v.notify, sound: !!v.sound };
+			save();
+			if (asked && window.Notification && Notification.permission === "default") Notification.requestPermission();
+		});
+	}
+	function exportDecks() {
+		var blob = new Blob([JSON.stringify({ xitterPro: 1, decks: state.decks }, null, 2)], { type: "application/json" });
+		var a = document.createElement("a");
+		a.href = URL.createObjectURL(blob);
+		a.download = "xitter-pro-decks.json";
+		document.body.appendChild(a); a.click(); a.remove();
+		setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+	}
+	function importDecks() {
+		var input = document.createElement("input");
+		input.type = "file"; input.accept = "application/json,.json";
+		input.onchange = function () {
+			var file = input.files && input.files[0];
+			if (!file) return;
+			file.text().then(function (text) {
+				var data = JSON.parse(text);
+				var decks = (data && data.decks || []).filter(function (d) { return d && typeof d.name === "string" && Array.isArray(d.columns); }).map(function (d) {
+					return { id: uid(), name: d.name.slice(0, 40), emoji: String(d.emoji || "").slice(0, 8), columns: d.columns.filter(function (c) { return c && TYPES[c.type]; }).map(function (c) {
+						return { id: uid(), type: c.type, arg: c.type === "link" ? cleanArg("link", c.arg) : String(c.arg || "").slice(0, 500), width: /^[sml]$/.test(c.width) ? c.width : "m", title: String(c.title || "").slice(0, 60), refresh: [0, 1, 5, 15].indexOf(c.refresh) >= 0 ? c.refresh : 0, filters: c.filters && typeof c.filters === "object" ? c.filters : undefined };
+					}) };
+				});
+				if (!decks.length) throw new Error("no decks");
+				state.decks = state.decks.concat(decks);
+				state.active = decks[0].id;
+				save(); closeModal(); drawDecks(); drawBoard();
+			}).catch(function () { alert("That file has no decks in it."); });
+		};
+		input.click();
+	}
+
+	// --- keyboard ----------------------------------------------------------
+	// X Pro's own keys where they don't clash with the client's; the columns
+	// pass the number and bracket keys on (src/pro.ts)
+	var KEYS = [
+		["n", "New post"], ["a", "Add column"], ["/", "Search"], ["1 – 9", "Go to column"], ["0", "Go to the last column"],
+		["[  ]", "Previous or next deck"], ["r", "Reload every column"], ["s", "Collapse or expand the side bar"], [",", "Settings"], ["?", "This list"], ["Esc", "Close"]
+	];
+	function showKeys() {
+		closeModal();
+		modal.innerHTML = '<div class="sheet"><div class="sheet-head"><button class="icon-btn" type="button" aria-label="Close">' + icon("close") + "</button><h3>Keyboard shortcuts</h3></div><div class=\"keys\">" +
+			KEYS.map(function (k) { return "<kbd>" + esc(k[0]) + "</kbd><span>" + esc(k[1]) + "</span>"; }).join("") +
+			'</div><p class="muted" style="padding:0 24px 20px;margin:0">Inside a column, ' + esc(CFG.instance) + "'s own shortcuts work as usual.</p></div>";
+		modal.querySelector("button").onclick = closeModal;
+		modal.classList.add("open");
+	}
+	function focusColumn(i) {
+		var cols = document.querySelectorAll(".col");
+		var el = cols[i < 0 ? cols.length - 1 : i];
+		if (!el) return;
+		el.scrollIntoView({ behavior: "smooth", inline: "nearest", block: "nearest" });
+		el.classList.add("focus");
+		setTimeout(function () { el.classList.remove("focus"); }, 700);
+		var f = el.querySelector("iframe");
+		if (f) f.focus();
+	}
+	function shortcut(k) {
+		if (/^[1-9]$/.test(k)) return focusColumn(Number(k) - 1);
+		if (k === "0") return focusColumn(-1);
+		if (k === "[" || k === "]") {
+			var i = state.decks.indexOf(deck()) + (k === "]" ? 1 : -1);
+			var d = state.decks[(i + state.decks.length) % state.decks.length];
+			return openDeck(d.id);
+		}
+		if (k === "n") return compose();
+		if (k === "a" || k === "/") return openAdder();
+		if (k === "r") return deck().columns.forEach(function (c) { send(c.id, { xpro: "reload" }); });
+		if (k === "s") return $("#collapse").click();
+		if (k === ",") return openSettings();
+		if (k === "?") return showKeys();
+	}
+	document.addEventListener("keydown", function (e) {
+		if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented) return;
+		if (/^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName) || e.target.isContentEditable) return;
+		if (modal.classList.contains("open") || layer.classList.contains("open")) return;
+		if (/^([0-9n\/ars,?\[\]])$/.test(e.key)) { e.preventDefault(); shortcut(e.key); }
+	});
+
 	// --- wiring ------------------------------------------------------------
 	$("#post").onclick = compose;
 	$("#add-col").onclick = openAdder;
@@ -698,9 +996,11 @@ body.slim #collapse svg{transform:scaleX(-1)}
 	$("#collapse").onclick = function () { state.slim = !state.slim; save(); document.body.classList.toggle("slim", state.slim); };
 	$("#more").onclick = function (e) {
 		menu(e.currentTarget, [
+			{ label: "Settings", icon: "gear", run: openSettings },
+			{ label: "Keyboard shortcuts", icon: "keyboard", run: showKeys },
 			{ label: "Reload all columns", icon: "refresh", run: function () { deck().columns.forEach(function (c) { send(c.id, { xpro: "reload" }); }); } },
 			{ label: "Open " + CFG.instance, icon: "open", href: ORIGIN + "/home" },
-			{ label: "Settings", icon: "gear", href: ORIGIN + "/settings" },
+			{ label: CFG.instance + " settings", icon: "gear", href: ORIGIN + "/settings" },
 			{ label: "Reset Xitter Pro", icon: "close", danger: true, run: function () {
 				if (!confirm("Remove every deck and column on this device?")) return;
 				state = defaults(); save(); drawMe(); drawDecks(); drawBoard();
@@ -710,6 +1010,9 @@ body.slim #collapse svg{transform:scaleX(-1)}
 	// back from signing in on the instance: start again
 	window.addEventListener("focus", function () { if (signedOut) { signedOut = false; drawBoard(); } });
 
+	// a link to a deck: #deck=<id>
+	var wanted = /^#deck=(\w+)$/.exec(location.hash);
+	if (wanted && state.decks.some(function (d) { return d.id === wanted[1]; })) state.active = wanted[1];
 	document.body.classList.toggle("slim", !!state.slim);
 	drawMe(); drawDecks(); drawBoard();
 })();
